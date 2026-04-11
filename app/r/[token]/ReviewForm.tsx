@@ -21,7 +21,7 @@ export default function ReviewForm({ requestId, tenantName, googleReviewUrl }: P
 
     if (value >= 4 && googleReviewUrl) {
       await saveReview(value, null)
-      window.location.href = googleReviewUrl
+      window.location.assign(googleReviewUrl)
       return
     }
 
