@@ -29,6 +29,23 @@ export async function POST(req: NextRequest) {
 
     const supabase = await createClient()
 
+    // Verificar autenticação
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    }
+
+    // Verificar que o tenantId pertence ao usuário autenticado (previne IDOR)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('tenant_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile || profile.tenant_id !== tenantId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
     const { data: contacts } = await supabase
       .from('contacts')
       .select('id, name, phone')

@@ -24,6 +24,7 @@ export default async function ReviewPage({ params }: { params: { token: string }
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <ReviewForm
         requestId={request.id}
+        token={params.token}
         tenantName={tenant?.name || 'nossa empresa'}
         googleReviewUrl={tenant?.google_review_url || null}
       />
