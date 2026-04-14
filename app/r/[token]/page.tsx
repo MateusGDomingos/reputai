@@ -1,25 +1,18 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import ReviewForm from './ReviewForm'
 
 export default async function ReviewPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
+  // Usa cliente padrão (anon key + RLS) — NÃO usar service_role em rotas públicas
+  const supabase = await createClient()
 
   const { data: request, error } = await supabase
     .from('review_requests')
     .select('id, tenant_id, tenants(name, google_review_url)')
     .eq('token', token)
     .single()
-
-  console.log('TOKEN:', token)
-  console.log('REQUEST:', request)
-  console.log('ERROR:', error)
 
   if (!request) return notFound()
 
@@ -34,6 +27,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ token: 
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <ReviewForm
         requestId={request.id}
+        token={token}
         tenantName={tenant?.name || "nossa empresa"}
         googleReviewUrl={tenant?.google_review_url || null}
       />

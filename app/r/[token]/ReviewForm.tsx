@@ -5,11 +5,12 @@ import { Star } from 'lucide-react'
 
 type Props = {
   requestId: string
+  token: string
   tenantName: string
   googleReviewUrl: string | null
 }
 
-export default function ReviewForm({ requestId, tenantName, googleReviewUrl }: Props) {
+export default function ReviewForm({ requestId, token, tenantName, googleReviewUrl }: Props) {
   const [step, setStep] = useState<'stars' | 'feedback' | 'done'>('stars')
   const [stars, setStars] = useState(0)
   const [hover, setHover] = useState(0)
@@ -35,6 +36,7 @@ export default function ReviewForm({ requestId, tenantName, googleReviewUrl }: P
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         requestId,
+        token,
         stars: starsValue,
         feedback: feedbackText,
       }),
